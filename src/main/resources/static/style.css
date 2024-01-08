@@ -1,0 +1,11 @@
+body,html {
+    height: calc(100% - 40px);
+}
+
+span,div.validationError {
+	color: red;
+}
+
+.custom {
+    width: 200px !important;
+}
