@@ -4,6 +4,7 @@ import com.github.kholdy.dhome.model.Light;
 import com.github.kholdy.dhome.model.Room;
 import com.github.kholdy.dhome.service.LightService;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class RestApiController {
         return listOfRooms;
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/{name}")
     Optional<Room> getLightByName(@PathVariable String name) {
         for (Room r: listOfRooms) {

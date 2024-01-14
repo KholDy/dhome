@@ -2,11 +2,13 @@ package com.github.kholdy.dhome.config;
 
 import com.github.kholdy.dhome.model.User;
 import com.github.kholdy.dhome.data.UserRepository;
+import com.github.kholdy.dhome.service.JpaUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -19,21 +21,18 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
-	@Bean
+	private final JpaUserDetailsService jpaUserDetailsService;
+
+    public SecurityConfig(JpaUserDetailsService jpaUserDetailsService) {
+        this.jpaUserDetailsService = jpaUserDetailsService;
+    }
+
+    @Bean
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
-	}
-	
-	@Bean
-	UserDetailsService userDetailsService(UserRepository userRepo) {
-		return username -> {
-			User user = userRepo.findByUsername(username);
-			if(user != null) return user;
-
-			throw new UsernameNotFoundException("User '" + username + "' not found");
-		};
 	}
 
 	@Bean
@@ -45,6 +44,7 @@ public class SecurityConfig {
 					auth.anyRequest().authenticated();
 				})
 				//.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.userDetailsService(jpaUserDetailsService)
 				.httpBasic(Customizer.withDefaults())
 				.build();
 	}
@@ -64,6 +64,7 @@ public class SecurityConfig {
 							AntPathRequestMatcher.antMatcher("/register/**")).permitAll();
 					auth.anyRequest().authenticated();
 				})
+				.userDetailsService(jpaUserDetailsService)
 				.formLogin(form -> {
 					form.loginPage("/")
 					.defaultSuccessUrl("/home", true)

@@ -1,12 +1,5 @@
 package com.github.kholdy.dhome.model;
 
-import java.util.Collection;
-import java.util.List;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User implements UserDetails{
+public class User {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -38,6 +31,8 @@ public class User implements UserDetails{
 	@NotEmpty(message = "Password cannot be empty.")
 	@Size(min = 8, max = 100, message = "Password most be min = 8 and max = 100 symbols.")
 	private String password;
+
+	private String authority;
 	
 	@NotEmpty(message = "Email cannot be empty.")
 	@Email(message = "Email is not valid")
@@ -59,31 +54,7 @@ public class User implements UserDetails{
 		this.country = country;
 		this.city = city;
 		this.phoneNumber = phoneNumber;
-	}
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+		this.authority = "ROLE_USER";
 	}
-
-	@Override
-	public boolean isAccountNonExpired() {
-		return true;
-	}
-
-	@Override
-	public boolean isAccountNonLocked() {
-		return true;
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return true;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
-
 }

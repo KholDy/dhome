@@ -69,7 +69,7 @@ public class HomeController {
 		Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
 
 		String username = loggedInUser.getName();
-		user = userRepo.findByUsername(username);
+		user = userRepo.findByUsername(username).get();
 		model.addAttribute("username", user.getUsername());
 
 		// Проверяем состояние освещения(вкл/откл) во всех комнатах
