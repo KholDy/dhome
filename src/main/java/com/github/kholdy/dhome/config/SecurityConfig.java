@@ -5,9 +5,11 @@ import com.github.kholdy.dhome.data.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -33,21 +35,33 @@ public class SecurityConfig {
 			throw new UsernameNotFoundException("User '" + username + "' not found");
 		};
 	}
+
+	@Bean
+	@Order(1)
+	SecurityFilterChain restApiFilterChain(HttpSecurity http) throws Exception {
+		return  http
+				.securityMatcher("/api/**")
+				.authorizeHttpRequests(auth -> {
+					auth.anyRequest().authenticated();
+				})
+				//.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.httpBasic(Customizer.withDefaults())
+				.build();
+	}
 	
 	@Bean
+	@Order(2)
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		return http
-				.csrf().disable()
 				.authorizeHttpRequests(auth -> {
 					auth.requestMatchers(
-							new AntPathRequestMatcher("/home"),
-							new AntPathRequestMatcher("/home/**"),
-							new AntPathRequestMatcher("/api/**")).hasRole("USER");
+							AntPathRequestMatcher.antMatcher("/home"),
+							AntPathRequestMatcher.antMatcher("/home/**")).hasRole("USER");
 					auth.requestMatchers(
-							new AntPathRequestMatcher("/"),
-							new AntPathRequestMatcher("/**"),
-							new AntPathRequestMatcher("/register"),
-							new AntPathRequestMatcher("/register/**")).permitAll();
+							AntPathRequestMatcher.antMatcher("/"),
+							AntPathRequestMatcher.antMatcher("/**"),
+							AntPathRequestMatcher.antMatcher("/register"),
+							AntPathRequestMatcher.antMatcher("/register/**")).permitAll();
 					auth.anyRequest().authenticated();
 				})
 				.formLogin(form -> {
