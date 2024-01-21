@@ -1,12 +1,15 @@
 package com.github.kholdy.dhome.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.kholdy.dhome.model.Light;
 import org.springframework.http.*;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
+@Service
 public class LightService {
 	private final String RESPONSE_ON = "{\"state\":\"on\"}";
 	private final String RESPONSE_OFF = "{\"state\":\"off\"}";
@@ -22,7 +25,7 @@ public class LightService {
 	}
 
 	// Получение состояния вкл/откл света
-	public Light state(Light light) throws Exception {
+	public Light state(Light light) {
 		URI url = URI.create(light.getIp() + "/ledState");
 		RestTemplate restTemplate = new RestTemplate();
 
@@ -38,7 +41,7 @@ public class LightService {
 	}
 
 	// Отправка запроса на смену состояни освещения(вкл/откл)
-	public Light sendRequestLightRest(Light light) throws Exception {
+	public Light sendRequestLightRest(Light light) throws JsonProcessingException {
 		URI url = URI.create(light.getIp() + "/led");
 
 		RestTemplate restTemplate = new RestTemplate();

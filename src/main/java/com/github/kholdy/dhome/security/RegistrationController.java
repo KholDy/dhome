@@ -1,7 +1,10 @@
 package com.github.kholdy.dhome.security;
 
+import java.util.Collections;
 import java.util.List;
 
+import com.github.kholdy.dhome.data.RoleRepository;
+import com.github.kholdy.dhome.model.Role;
 import com.github.kholdy.dhome.model.User;
 import com.github.kholdy.dhome.data.UserRepository;
 import jakarta.persistence.Access;
@@ -23,12 +26,14 @@ import jakarta.validation.Valid;
 public class RegistrationController {
 	
 	private final UserRepository userRepo;
+	private final RoleRepository roleRepo;
 	private final PasswordEncoder passwordEncoder;
 
 	@Autowired
-	public RegistrationController(UserRepository userRepo, PasswordEncoder passwordEncoder) {
+	public RegistrationController(UserRepository userRepo, RoleRepository roleRepo, PasswordEncoder passwordEncoder) {
 		this.userRepo = userRepo;
-		this.passwordEncoder = passwordEncoder;
+        this.roleRepo = roleRepo;
+        this.passwordEncoder = passwordEncoder;
 	}
 	
 	@GetMapping
@@ -38,7 +43,7 @@ public class RegistrationController {
 	}
 	
 	@PostMapping
-	public String processRegistration(@ModelAttribute("user") @Valid User user, BindingResult result) {
+	public String processRegistration(@ModelAttribute("user") @Valid User newUser, BindingResult result) {
 		String err = "A user with the same username or email already exists";
 
 		// Поиск пользователей у которых username и email совподают с введенными в форме регистрации
@@ -46,12 +51,12 @@ public class RegistrationController {
 		List<User> usersWithSameUsername =
 									listOfUsers.
 									   stream().
-									   filter((User u) -> u.getUsername().equals(user.getUsername())).toList();
+									   filter((User u) -> u.getUsername().equals(newUser.getUsername())).toList();
 
 		List<User> usersWithSameEmail =
 									listOfUsers.
 									   stream().
-									   filter((User u) -> u.getEmail().equals(user.getEmail())).toList();
+									   filter((User u) -> u.getEmail().equals(newUser.getEmail())).toList();
 
 		if (result.hasErrors()) {
 			return "registration";
@@ -60,20 +65,24 @@ public class RegistrationController {
 		// Если пользователь с таким username и email уже существуют бд,
 		// то выдаем ошибку и просим ввести другие username и email
 		if(usersWithSameUsername.isEmpty() && usersWithSameEmail.isEmpty()) {
-			userRepo.save(new User(user.getUsername(),
-								   passwordEncoder.encode(user.getPassword()),
-								   user.getEmail(),
-								   user.getFullname(),
-								   user.getCountry(),
-								   user.getCity(),
-								   user.getPhoneNumber()));
+			Role role = roleRepo.findByName("ROLE_USER").get();
+			User user = new User(newUser.getUsername(),
+								passwordEncoder.encode(newUser.getPassword()),
+								newUser.getEmail(),
+								newUser.getFullname(),
+								newUser.getCountry(),
+								newUser.getCity(),
+								newUser.getPhoneNumber());
+			user.getRoles().add(role);
+
+			userRepo.save(user);
 		} else {
 			ObjectError error = new ObjectError("globalError", err);
 	        result.addError(error);
 	        return "registration";
 		}
 
-		return "redirect:/";
+	return "redirect:/";
 	}
 	
 }

@@ -21,14 +21,15 @@ public class HomeController {
 	@Autowired
 	private UserRepository userRepo;
 
+	@Autowired
+	private LightService lightService;
+
 	private User user;
 
 	private final Room LivingRoom;
 	private final Room Bedroom;
 	private final Room Hallway;
 	private final Room Kitchen;
-
-	private final LightService lightService;
 
 	@Autowired
 	public HomeController(@Qualifier("Living room") Room LivingRoom,
@@ -40,8 +41,6 @@ public class HomeController {
 		this.Bedroom = Bedroom;
 		this.Hallway = Hallway;
 		this.Kitchen = Kitchen;
-
-		this.lightService = new LightService();
 	}
 	
 	@ModelAttribute(name = "btnLivingRoom")
@@ -65,7 +64,7 @@ public class HomeController {
 	}
 	
 	@GetMapping()
-	public String getStateLed(Model model) throws Exception {
+	public String getStateLed(Model model){
 		Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
 
 		String username = loggedInUser.getName();
@@ -73,8 +72,11 @@ public class HomeController {
 		model.addAttribute("username", user.getUsername());
 
 		// Проверяем состояние освещения(вкл/откл) во всех комнатах
+
 		lightService.state(LivingRoom.getLight());
 		lightService.state(Bedroom.getLight());
+		//lightService.state(Kitchen.getLight());
+		//lightService.state(Hallway.getLight());
 
 		// Меняем состояние на кнопке
 		model.addAttribute(LivingRoom.getNameModelOfView(), LivingRoom.getName() + " light " + LivingRoom.getLight().getState());
@@ -102,12 +104,12 @@ public class HomeController {
 	}
 	
 	@PostMapping("/light-kitchen")
-	public String lightKitchen(Model model) throws Exception {
+	public String lightKitchen(Model model) {
 		return "home";
 	}
 	
 	@PostMapping("/light-hallway")
-	public String lightHallway(Model model) throws Exception {
+	public String lightHallway(Model model)  {
 		return "home";
 	}
 }

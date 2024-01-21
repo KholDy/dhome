@@ -3,6 +3,7 @@ package com.github.kholdy.dhome.web;
 import com.github.kholdy.dhome.model.Light;
 import com.github.kholdy.dhome.model.Room;
 import com.github.kholdy.dhome.service.LightService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,9 @@ import java.util.Optional;
 @RequestMapping("/api/rooms")
 public class RestApiController {
     private final List<Room> listOfRooms = new ArrayList<>();
-    private final LightService lightService;
+
+    @Autowired
+    private LightService lightService;
 
     private final Room LivingRoom;
     private final Room Bedroom;
@@ -30,8 +33,6 @@ public class RestApiController {
         this.Bedroom = Bedroom;
         this.Hallway = Hallway;
         this.Kitchen = Kitchen;
-
-        this.lightService = new LightService();
 
         listOfRooms.add(this.LivingRoom);
         listOfRooms.add(this.Bedroom);
