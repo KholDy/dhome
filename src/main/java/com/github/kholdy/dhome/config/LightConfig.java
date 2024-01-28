@@ -1,5 +1,6 @@
 package com.github.kholdy.dhome.config;
 
+import com.github.kholdy.dhome.model.ClimateSensor;
 import com.github.kholdy.dhome.model.Light;
 import com.github.kholdy.dhome.model.Room;
 import org.springframework.context.annotation.Bean;
@@ -14,25 +15,25 @@ public class LightConfig {
     @Bean(name = "Living room")
     @Scope("singleton")
     Room livingroom() {
-        return new Room("Livingroom", "btnLivingRoom", addLightLivingRoom());
+        return new Room("Livingroom", "btnLivingRoom", addLightLivingRoom(), addClimateSensorAtHome());
     }
 
     @Bean(name = "Bedroom")
     @Scope("singleton")
     Room bedroom() {
-        return new Room("Bedroom", "btnBedroom", addLightBedroom());
+        return new Room("Bedroom", "btnBedroom", addLightBedroom(), null);
     }
 
     @Bean(name = "Hallway")
     @Scope("singleton")
     Room hallway() {
-        return new Room("Hallway","btnHallway", addLightHallway());
+        return new Room("Hallway","btnHallway", addLightHallway(), null);
     }
 
     @Bean(name = "Kitchen")
     @Scope("singleton")
     Room kitchen() {
-        return new Room("Kitchen", "btnKitchen", addLightKitchen());
+        return new Room("Kitchen", "btnKitchen", addLightKitchen(), null);
     }
 
     @Bean
@@ -71,6 +72,17 @@ public class LightConfig {
         return new Light(String.valueOf(4),
                 "Main light kitchen",
                 "",
+                null,
+                null);
+    }
+
+    @Bean
+    @Scope("singleton")
+    ClimateSensor addClimateSensorAtHome() {
+        return new ClimateSensor(String.valueOf(1),
+                "http://192.168.0.210",
+                "Sensor of temperature, pressure, humidity",
+                null,
                 null,
                 null);
     }

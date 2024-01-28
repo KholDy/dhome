@@ -11,8 +11,6 @@ import java.net.URI;
 
 @Service
 public class LightService {
-	private final String RESPONSE_ON = "{\"state\":\"on\"}";
-	private final String RESPONSE_OFF = "{\"state\":\"off\"}";
 
 	// Вкл/Откл света
 	public Light selector(Light light) throws Exception {
@@ -25,17 +23,16 @@ public class LightService {
 	}
 
 	// Получение состояния вкл/откл света
-	public Light state(Light light) {
+	public Light state(Light light) throws JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
 		URI url = URI.create(light.getIp() + "/ledState");
 		RestTemplate restTemplate = new RestTemplate();
 
 		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
-		if(response.getBody().equals(RESPONSE_ON)) {
-			light.setState("on");
-		} else if(response.getBody().equals(RESPONSE_OFF)) {
-			light.setState("off");
-		}
+		Light responseLight = mapper.readValue(response.getBody(), Light.class);
+
+		light.setState(responseLight.getState());
 
 		return light;
 	}

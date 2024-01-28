@@ -9,4 +9,5 @@ public class Room {
     private final String name;
     private final String nameModelOfView;
     private final Light light;
+    private final ClimateSensor climateSensor;
 }

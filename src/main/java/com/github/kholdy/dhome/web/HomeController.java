@@ -1,8 +1,10 @@
 package com.github.kholdy.dhome.web;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.kholdy.dhome.data.UserRepository;
 import com.github.kholdy.dhome.model.Room;
 import com.github.kholdy.dhome.model.User;
+import com.github.kholdy.dhome.service.ClimateSensorService;
 import com.github.kholdy.dhome.service.LightService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,6 +25,9 @@ public class HomeController {
 
 	@Autowired
 	private LightService lightService;
+
+	@Autowired
+	private ClimateSensorService sensorService;
 
 	private User user;
 
@@ -62,9 +67,24 @@ public class HomeController {
 	public String addHallway() {
 		return "connection is fail";
 	}
+
+	@ModelAttribute(name = "sensorTemperature")
+	public String addSensorTemperature() {
+		return "connection is fail";
+	}
+
+	@ModelAttribute(name = "sensorPressure")
+	public String addSensorPressure() {
+		return "connection is fail";
+	}
+
+	@ModelAttribute(name = "sensorHumidity")
+	public String addSensorHumidity() {
+		return "connection is fail";
+	}
 	
 	@GetMapping()
-	public String getStateLed(Model model){
+	public String getStateLed(Model model) throws JsonProcessingException {
 		Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
 
 		String username = loggedInUser.getName();
@@ -78,9 +98,14 @@ public class HomeController {
 		//lightService.state(Kitchen.getLight());
 		//lightService.state(Hallway.getLight());
 
+		sensorService.getData(LivingRoom.getClimateSensor());
+
 		// Меняем состояние на кнопке
 		model.addAttribute(LivingRoom.getNameModelOfView(), LivingRoom.getName() + " light " + LivingRoom.getLight().getState());
 		model.addAttribute(Bedroom.getNameModelOfView(), Bedroom.getName() + " light " + Bedroom.getLight().getState());
+		model.addAttribute("sensorTemperature", LivingRoom.getClimateSensor().getTemperature().substring(0, 4));
+		model.addAttribute("sensorPressure", LivingRoom.getClimateSensor().getPressure().substring(0, 3));
+		model.addAttribute("sensorHumidity", LivingRoom.getClimateSensor().getHumidity().substring(0, 4));
 		return "home";
 	}
 
