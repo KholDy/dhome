@@ -3,14 +3,23 @@ package com.github.kholdy.dhome.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.kholdy.dhome.model.Light;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.time.Duration;
 
 @Service
 public class LightService {
+
+	@Value("${rest.template.timeout}")
+	private int restTemplateTimeoutMs;
 
 	// Вкл/Откл света
 	public Light selector(Light light) throws Exception {
@@ -26,13 +35,17 @@ public class LightService {
 	public Light state(Light light) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
 		URI url = URI.create(light.getIp() + "/ledState");
-		RestTemplate restTemplate = new RestTemplate();
+		RestTemplate restTemplate = new RestTemplateBuilder().setConnectTimeout(Duration.ofMillis(restTemplateTimeoutMs))
+				.setReadTimeout(Duration.ofMillis(restTemplateTimeoutMs)).build();
 
-		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+		try {
+			ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+			Light responseLight = mapper.readValue(response.getBody(), Light.class);
 
-		Light responseLight = mapper.readValue(response.getBody(), Light.class);
-
-		light.setState(responseLight.getState());
+			light.setState(responseLight.getState());
+		} catch (ResourceAccessException e) {
+			light.setState("fail!");
+		}
 
 		return light;
 	}

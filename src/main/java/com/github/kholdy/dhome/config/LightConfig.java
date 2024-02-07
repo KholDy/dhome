@@ -61,7 +61,7 @@ public class LightConfig {
     Light addLightHallway() {
         return new Light(String.valueOf(3),
                 "Main light hallway",
-                "",
+                "http://192.168.0.203",
                 null,
                 null);
     }
@@ -71,7 +71,7 @@ public class LightConfig {
     Light addLightKitchen() {
         return new Light(String.valueOf(4),
                 "Main light kitchen",
-                "",
+                "http://192.168.0.204",
                 null,
                 null);
     }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.client.ResourceAccessException;
 
 @Controller
 @RequestMapping("/home")
@@ -92,17 +93,19 @@ public class HomeController {
 		model.addAttribute("username", user.getUsername());
 
 		// Проверяем состояние освещения(вкл/откл) во всех комнатах
-
 		lightService.state(LivingRoom.getLight());
 		lightService.state(Bedroom.getLight());
-		//lightService.state(Kitchen.getLight());
-		//lightService.state(Hallway.getLight());
+		lightService.state(Kitchen.getLight());
+		lightService.state(Hallway.getLight());
 
 		sensorService.getData(LivingRoom.getClimateSensor());
 
 		// Меняем состояние на кнопке
 		model.addAttribute(LivingRoom.getNameModelOfView(), LivingRoom.getName() + " light " + LivingRoom.getLight().getState());
 		model.addAttribute(Bedroom.getNameModelOfView(), Bedroom.getName() + " light " + Bedroom.getLight().getState());
+		model.addAttribute(Kitchen.getNameModelOfView(), Kitchen.getName() + " light " + Kitchen.getLight().getState());
+		model.addAttribute(Hallway.getNameModelOfView(), Hallway.getName() + " light " + Hallway.getLight().getState());
+
 		model.addAttribute("sensorTemperature", LivingRoom.getClimateSensor().getTemperature().substring(0, 4));
 		model.addAttribute("sensorPressure", LivingRoom.getClimateSensor().getPressure().substring(0, 3));
 		model.addAttribute("sensorHumidity", LivingRoom.getClimateSensor().getHumidity().substring(0, 4));
