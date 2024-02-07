@@ -5,4 +5,12 @@
 <h1 align="center">Hello everyone, I'm Dmitrii!</h1>
 <h3 align="center">This is dhome project.</h3>
 
-This app can remotely manage light at my home. I used microcontrollers with relay for turn on/off light. This app use Java 21, Spring Boot, Spring Security, Spring Web, Spring DATA JPA, Thymeleaf, Lombok, MySql. Using these technologies I implemented user registration, web interface and REST API.
+This app can control of light and climate at my home.
+I used a microcontroller ESP8266 with a relay module for turn on/off light.
+For control of climate, I also used a microcontroller ESP8266 with sensor BME/BMP280.
+Firmware for ESP, you can find in my Github repository.
+This app use Java 21, Spring Boot, Spring Security, Spring Web,
+Spring DATA JPA, Thymeleaf, Lombok, MySql.
+Using these technologies I implemented user registration,
+web interface and REST API.
+
