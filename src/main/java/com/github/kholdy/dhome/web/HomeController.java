@@ -38,10 +38,10 @@ public class HomeController {
 	private final Room Kitchen;
 
 	@Autowired
-	public HomeController(@Qualifier("Living room") Room LivingRoom,
-						  @Qualifier("Bedroom") Room Bedroom,
-						  @Qualifier("Hallway") Room Hallway,
-						  @Qualifier("Kitchen") Room Kitchen) {
+	public HomeController(@Qualifier("living room") Room LivingRoom,
+						  @Qualifier("bedroom") Room Bedroom,
+						  @Qualifier("hallway") Room Hallway,
+						  @Qualifier("kitchen") Room Kitchen) {
 
 		this.LivingRoom = LivingRoom;
 		this.Bedroom = Bedroom;
@@ -109,6 +109,11 @@ public class HomeController {
 		model.addAttribute("sensorTemperature", LivingRoom.getClimateSensor().getTemperature().substring(0, 4));
 		model.addAttribute("sensorPressure", LivingRoom.getClimateSensor().getPressure().substring(0, 3));
 		model.addAttribute("sensorHumidity", LivingRoom.getClimateSensor().getHumidity().substring(0, 4));
+		return "home";
+	}
+
+	@GetMapping("/light-bedroom")
+	public String getLivingroom() {
 		return "home";
 	}
 

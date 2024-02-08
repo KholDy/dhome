@@ -33,6 +33,7 @@ public class SecurityConfig {
 	@Order(1)
 	SecurityFilterChain restApiFilterChain(HttpSecurity http) throws Exception {
 		return  http
+				.csrf().disable()
 				.securityMatcher("/api/**")
 				.authorizeHttpRequests(auth -> {
 					auth.anyRequest().authenticated();

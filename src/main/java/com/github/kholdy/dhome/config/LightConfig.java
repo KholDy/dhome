@@ -12,28 +12,28 @@ import org.springframework.context.annotation.Scope;
 @ComponentScan(basePackages = "main")
 public class LightConfig {
 
-    @Bean(name = "Living room")
+    @Bean(name = "living room")
     @Scope("singleton")
     Room livingroom() {
-        return new Room("Livingroom", "btnLivingRoom", addLightLivingRoom(), addClimateSensorAtHome());
+        return new Room("livingroom", "btnLivingRoom", addLightLivingRoom(), addClimateSensorAtHome());
     }
 
-    @Bean(name = "Bedroom")
+    @Bean(name = "bedroom")
     @Scope("singleton")
     Room bedroom() {
-        return new Room("Bedroom", "btnBedroom", addLightBedroom(), null);
+        return new Room("bedroom", "btnBedroom", addLightBedroom(), null);
     }
 
-    @Bean(name = "Hallway")
+    @Bean(name = "hallway")
     @Scope("singleton")
     Room hallway() {
-        return new Room("Hallway","btnHallway", addLightHallway(), null);
+        return new Room("hallway","btnHallway", addLightHallway(), null);
     }
 
-    @Bean(name = "Kitchen")
+    @Bean(name = "kitchen")
     @Scope("singleton")
     Room kitchen() {
-        return new Room("Kitchen", "btnKitchen", addLightKitchen(), null);
+        return new Room("kitchen", "btnKitchen", addLightKitchen(), null);
     }
 
     @Bean
