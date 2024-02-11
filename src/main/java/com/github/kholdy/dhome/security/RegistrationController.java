@@ -24,12 +24,10 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/register")
 public class RegistrationController {
-	
 	private final UserRepository userRepo;
 	private final RoleRepository roleRepo;
 	private final PasswordEncoder passwordEncoder;
 
-	@Autowired
 	public RegistrationController(UserRepository userRepo, RoleRepository roleRepo, PasswordEncoder passwordEncoder) {
 		this.userRepo = userRepo;
         this.roleRepo = roleRepo;

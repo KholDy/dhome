@@ -18,12 +18,15 @@ import java.util.Set;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public AdminController(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @ModelAttribute(name = "listOfUsers")
     public Iterable<User> addListOfUsers() {
@@ -32,21 +35,19 @@ public class AdminController {
 
     @GetMapping
     public String getAdmin(Model model) {
-        Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
-
-        String username = loggedInUser.getName();
-        User user = userRepository.findByUsername(username).get();
-        model.addAttribute("username", user.getUsername());
+        getLoggedUser(model);
 
         return "admin";
     }
 
     @GetMapping("/user-edit/{id}")
     public String editUser(@PathVariable("id") Long id, Model model) {
-        User user = userRepository.findById(id).get();
+        User userChange = userRepository.findById(id).get();
         Iterable<Role> listRoles = roleRepository.findAll();
-        model.addAttribute("user", user);
+        model.addAttribute("user", userChange);
         model.addAttribute("listRoles", listRoles);
+
+        getLoggedUser(model);
         return "user-edit";
     }
 
@@ -56,5 +57,19 @@ public class AdminController {
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         userRepository.save(newUser);
         return "admin";
+    }
+
+    private void getLoggedUser(Model model) {
+        Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
+
+        String username = loggedInUser.getName();
+        User user = userRepository.findByUsername(username).get();
+        model.addAttribute("username", user.getUsername());
+
+        for (Role  r:  user.getRoles()) {
+            if (r.getName().equals("ROLE_ADMIN")) {
+                model.addAttribute("role", r.getName());
+            }
+        }
     }
 }

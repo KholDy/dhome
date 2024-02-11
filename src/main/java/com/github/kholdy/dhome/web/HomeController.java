@@ -2,6 +2,7 @@ package com.github.kholdy.dhome.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.kholdy.dhome.data.UserRepository;
+import com.github.kholdy.dhome.model.Role;
 import com.github.kholdy.dhome.model.Room;
 import com.github.kholdy.dhome.model.User;
 import com.github.kholdy.dhome.service.ClimateSensorService;
@@ -18,35 +19,33 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.ResourceAccessException;
 
+import java.util.Set;
+
 @Controller
 @RequestMapping("/home")
 public class HomeController {
-	@Autowired
-	private UserRepository userRepo;
-
-	@Autowired
-	private LightService lightService;
-
-	@Autowired
-	private ClimateSensorService sensorService;
-
-	private User user;
-
+	private final UserRepository userRepo;
+	private final LightService lightService;
+	private final ClimateSensorService sensorService;
 	private final Room LivingRoom;
 	private final Room Bedroom;
 	private final Room Hallway;
 	private final Room Kitchen;
 
-	@Autowired
-	public HomeController(@Qualifier("living room") Room LivingRoom,
-						  @Qualifier("bedroom") Room Bedroom,
-						  @Qualifier("hallway") Room Hallway,
-						  @Qualifier("kitchen") Room Kitchen) {
+	private User user;
 
-		this.LivingRoom = LivingRoom;
-		this.Bedroom = Bedroom;
-		this.Hallway = Hallway;
-		this.Kitchen = Kitchen;
+	public HomeController(UserRepository userRepo, LightService lightService, ClimateSensorService sensorService,
+						  @Qualifier("living room") Room livingRoom,
+						  @Qualifier("bedroom") Room bedroom,
+						  @Qualifier("hallway") Room hallway,
+						  @Qualifier("kitchen") Room kitchen) {
+		this.userRepo = userRepo;
+		this.lightService = lightService;
+		this.sensorService = sensorService;
+		LivingRoom = livingRoom;
+		Bedroom = bedroom;
+		Hallway = hallway;
+		Kitchen = kitchen;
 	}
 	
 	@ModelAttribute(name = "btnLivingRoom")
@@ -91,6 +90,12 @@ public class HomeController {
 		String username = loggedInUser.getName();
 		user = userRepo.findByUsername(username).get();
 		model.addAttribute("username", user.getUsername());
+
+		for (Role  r:  user.getRoles()) {
+			if (r.getName().equals("ROLE_ADMIN")) {
+				model.addAttribute("role", r.getName());
+			}
+		}
 
 		// Проверяем состояние освещения(вкл/откл) во всех комнатах
 		lightService.state(LivingRoom.getLight());

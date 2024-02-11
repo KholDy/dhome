@@ -17,21 +17,20 @@ import java.util.Optional;
 public class RestApiController {
     private final List<Room> listOfRooms = new ArrayList<>();
 
-    @Autowired
-    private LightService lightService;
-
-    @Autowired
-    private ClimateSensorService sensorService;
-
+    private final LightService lightService;
+    private final ClimateSensorService sensorService;
     private final Room LivingRoom;
     private final Room Bedroom;
     private final Room Hallway;
     private final Room Kitchen;
 
-    public RestApiController(@Qualifier("living room") Room LivingRoom,
+    public RestApiController(LightService lightService, ClimateSensorService sensorService,
+                             @Qualifier("living room") Room LivingRoom,
                              @Qualifier("bedroom") Room Bedroom,
                              @Qualifier("hallway") Room Hallway,
                              @Qualifier("kitchen") Room Kitchen) {
+        this.lightService = lightService;
+        this.sensorService = sensorService;
         this.LivingRoom = LivingRoom;
         this.Bedroom = Bedroom;
         this.Hallway = Hallway;
