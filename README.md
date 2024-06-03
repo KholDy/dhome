@@ -8,7 +8,9 @@
 This app can control of light and climate at my home.
 I used a microcontroller ESP8266 with a relay module for turn on/off light.
 For control of climate, I also used a microcontroller ESP8266 with sensor BME/BMP280.
-Firmware for ESP, you can find in my Github repository.
+Firmware for ESP, you can find in my Github repository 
+for ESP8266_Smart_light [here](https://github.com/KholDy/ESP8266_Smart_light) and 
+for ESP8266_Smart-climate-control [here](https://github.com/KholDy/ESP8266_Smart-climate-control).
 This app use Java 21, Spring Boot, Spring Security, Spring Web,
 Spring DATA JPA, Thymeleaf, Lombok, MySql.
 Using these technologies I implemented user registration,
